@@ -1,0 +1,17 @@
+{
+    "name": "Microsoft SBOM-Tool",
+    "id": "sbom",
+    "version": "1.0.0",
+    "description": "A feature to install Microsoft SBOM-Tool to help generate SBOMs",
+    "options": {
+        "version": {
+            "type": "string",
+            "proposals": [
+                "latest",
+                "0.3.3"
+            ],
+            "default": "latest",
+            "description": "Select or enter sbom-tool version"
+        }
+    }
+}
