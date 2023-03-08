@@ -16,6 +16,7 @@ A feature to install Microsoft SBOM-Tool to help generate SBOMs
 | Options Id | Description | Type | Default Value |
 |-----|-----|-----|-----|
 | version | Select or enter sbom-tool version | string | latest |
+| alias | Select or enter an alias used to run the sbom-tool | string | sbom-tool |
 
 
 
