@@ -1,6 +1,7 @@
 #!/bin/bash
 
 SBOM_TOOL_VERSION="${VERSION:-"latest"}"
+SBOM_ALIAS="${ALIAS:="sbom-tool"}"
 
 set -e
 
@@ -46,13 +47,12 @@ validate_version_exists SBOM_TOOL_VERSION "${SBOM_TOOL_VERSION}"
 
 # download and install binary
 SBOM_FILENAME=sbom-tool-linux-x64
-SBOM_COMMAND=sbom-tool
 echo "Downloading ${SBOM_FILENAME}..."
 url="https://github.com/microsoft/sbom-tool/releases/download/${SBOM_TOOL_VERSION}/${SBOM_FILENAME}"
 echo "Downloading ${url}..."
-curl -sSL https://github.com/microsoft/sbom-tool/releases/download/"${SBOM_TOOL_VERSION}"/"${SBOM_FILENAME}" -o "${SBOM_COMMAND}"
-install -m 555 ${SBOM_COMMAND} /usr/local/bin/${SBOM_COMMAND}
-rm "${SBOM_COMMAND}"
+curl -sSL https://github.com/microsoft/sbom-tool/releases/download/"${SBOM_TOOL_VERSION}"/"${SBOM_FILENAME}" -o "${SBOM_ALIAS}"
+install -m 555 ${SBOM_ALIAS} /usr/local/bin/${SBOM_ALIAS}
+rm "${SBOM_ALIAS}"
 
 # Clean up
 rm -rf /var/lib/apt/lists/*

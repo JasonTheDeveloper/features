@@ -1,7 +1,7 @@
 {
     "name": "Microsoft SBOM-Tool",
     "id": "sbom",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "description": "A feature to install Microsoft SBOM-Tool to help generate SBOMs",
     "options": {
         "version": {
@@ -12,6 +12,16 @@
             ],
             "default": "latest",
             "description": "Select or enter sbom-tool version"
+        },
+        "alias": {
+            "type": "string",
+            "proposals": [
+                "sbom-tool",
+                "msft-sbom",
+                "sbom"
+            ],
+            "default": "sbom-tool",
+            "description": "Select or enter an alias used to run the sbom-tool"
         }
     }
 }
