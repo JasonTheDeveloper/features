@@ -1,0 +1,35 @@
+{
+    "install_sbom_latest": {
+        "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+        "features": {
+            "sbom": {
+                "version": "latest"
+            }
+        }
+    },
+    "install_sbom_specific_version": {
+        "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+        "features": {
+            "sbom": {
+                "version": "0.3.3"
+            }
+        }
+    },
+    "install_sbom_custom_alias": {
+        "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+        "features": {
+            "sbom": {
+                "version": "latest",
+                "alias": "msft-sbom"
+            }
+        }
+    },
+    "invalid_version": {
+        "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+        "features": {
+            "sbom": {
+                "version": "latest"
+            }
+        }
+    }
+}
