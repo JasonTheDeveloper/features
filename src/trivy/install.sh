@@ -86,8 +86,17 @@ curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/inst
 # Verify installation
 trivy --version
 
-# Set up shared TRIVY_HOME so plugins are available to all users
+# Set up shared TRIVY_HOME so plugins are available to all users.
+# Create a wrapper script that ensures TRIVY_HOME is always set, regardless
+# of how trivy is invoked (login shell, non-interactive sh -c, etc.).
 mkdir -p "${TRIVY_HOME}"
+mv /usr/local/bin/trivy /usr/local/bin/trivy-real
+cat > /usr/local/bin/trivy << WRAPPER
+#!/bin/sh
+export TRIVY_HOME="\${TRIVY_HOME:-${TRIVY_HOME}}"
+exec /usr/local/bin/trivy-real "\$@"
+WRAPPER
+chmod +x /usr/local/bin/trivy
 export TRIVY_HOME
 
 # Install plugins if specified
@@ -96,9 +105,6 @@ if [ -n "${TRIVY_PLUGINS}" ]; then
 	install_plugins "${TRIVY_PLUGINS}"
 fi
 
-# Ensure TRIVY_HOME is set for all users at runtime
-echo "export TRIVY_HOME=${TRIVY_HOME}" > /etc/profile.d/trivy.sh
-chmod +x /etc/profile.d/trivy.sh
 chmod -R a+rX "${TRIVY_HOME}"
 
 # Clean up
