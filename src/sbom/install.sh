@@ -41,6 +41,11 @@ validate_version_exists() {
 # make sure we have curl
 check_packages curl jq ca-certificates libicu-dev
 
+# Normalize version: add 'v' prefix if missing
+if [ "${SBOM_TOOL_VERSION}" != "latest" ] && [[ "${SBOM_TOOL_VERSION}" != v* ]]; then
+	SBOM_TOOL_VERSION="v${SBOM_TOOL_VERSION}"
+fi
+
 # make sure version is available
 if [ "${SBOM_TOOL_VERSION}" = "latest" ]; then SBOM_TOOL_VERSION=$(curl -sL https://api.github.com/repos/microsoft/sbom-tool/releases/latest | jq -r ".tag_name"); fi
 validate_version_exists SBOM_TOOL_VERSION "${SBOM_TOOL_VERSION}"

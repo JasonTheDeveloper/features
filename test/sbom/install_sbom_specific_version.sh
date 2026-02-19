@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Scenario: install_sbom_specific_version
-# Verifies that a specific version of sbom-tool (0.3.3) installs correctly
+# Verifies that a specific version of sbom-tool (2.2.5) installs correctly
 
 set -e
 
