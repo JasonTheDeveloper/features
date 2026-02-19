@@ -1,0 +1,25 @@
+{
+    "name": "Trivy",
+    "id": "trivy",
+    "version": "1.0.0",
+    "description": "A feature to install Trivy to scan for vulnerabilities in container images, file systems, and Git repositories",
+    "options": {
+        "version": {
+            "type": "string",
+            "proposals": [
+                "latest",
+                "0.69.1"
+            ],
+            "default": "latest",
+            "description": "Select or enter Trivy version"
+        },
+        "plugins": {
+            "type": "string",
+            "proposals": [
+                "mcp"
+            ],
+            "default": "",
+            "description": "Select or enter additional plugins to install with Trivy (e.g., mcp for Model Context Protocol plugin)"
+        }
+    }
+}

@@ -1,0 +1,51 @@
+{
+    "install_trivy_latest": {
+        "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+        "features": {
+            "trivy": {
+                "version": "latest"
+            }
+        }
+    },
+    "install_trivy_specific_version": {
+        "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+        "features": {
+            "trivy": {
+                "version": "0.69.1"
+            }
+        }
+    },
+    "install_trivy_with_v_prefix": {
+        "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+        "features": {
+            "trivy": {
+                "version": "v0.69.1"
+            }
+        }
+    },
+    "install_trivy_with_plugin": {
+        "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+        "features": {
+            "trivy": {
+                "version": "latest",
+                "plugins": "mcp"
+            }
+        }
+    },
+    "invalid_version": {
+        "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+        "features": {
+            "trivy": {
+                "version": "latest"
+            }
+        }
+    },
+    "invalid_plugin": {
+        "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+        "features": {
+            "trivy": {
+                "version": "latest"
+            }
+        }
+    }
+}
