@@ -2,6 +2,7 @@
 
 TRIVY_VERSION="${VERSION:-"latest"}"
 TRIVY_PLUGINS="${PLUGINS:-""}"
+TRIVY_HOME="/usr/local/share/trivy"
 
 set -e
 
@@ -85,11 +86,20 @@ curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/inst
 # Verify installation
 trivy --version
 
+# Set up shared TRIVY_HOME so plugins are available to all users
+mkdir -p "${TRIVY_HOME}"
+export TRIVY_HOME
+
 # Install plugins if specified
 if [ -n "${TRIVY_PLUGINS}" ]; then
 	echo "Installing Trivy plugins..."
 	install_plugins "${TRIVY_PLUGINS}"
 fi
+
+# Ensure TRIVY_HOME is set for all users at runtime
+echo "export TRIVY_HOME=${TRIVY_HOME}" > /etc/profile.d/trivy.sh
+chmod +x /etc/profile.d/trivy.sh
+chmod -R a+rX "${TRIVY_HOME}"
 
 # Clean up
 rm -rf /var/lib/apt/lists/*

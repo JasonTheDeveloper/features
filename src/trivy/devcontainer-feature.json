@@ -21,5 +21,8 @@
             "default": "",
             "description": "Select or enter additional plugins to install with Trivy (e.g., mcp for Model Context Protocol plugin)"
         }
+    },
+    "containerEnv": {
+        "TRIVY_HOME": "/usr/local/share/trivy"
     }
 }
