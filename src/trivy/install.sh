@@ -91,13 +91,23 @@ trivy --version
 # of how trivy is invoked (login shell, non-interactive sh -c, etc.).
 mkdir -p "${TRIVY_HOME}"
 mv /usr/local/bin/trivy /usr/local/bin/trivy-real
-cat > /usr/local/bin/trivy << WRAPPER
+cat > /usr/local/bin/trivy << 'WRAPPER'
 #!/bin/sh
-export TRIVY_HOME="\${TRIVY_HOME:-${TRIVY_HOME}}"
-exec /usr/local/bin/trivy-real "\$@"
+TRIVY_HOME="${TRIVY_HOME:-/usr/local/share/trivy}"
+export TRIVY_HOME
+# Ensure the current user's .trivy points to the shared TRIVY_HOME
+# so plugins installed at build time are available to all users.
+if [ ! -e "$HOME/.trivy" ]; then
+    ln -sf "$TRIVY_HOME" "$HOME/.trivy" 2>/dev/null || true
+fi
+exec /usr/local/bin/trivy-real "$@"
 WRAPPER
 chmod +x /usr/local/bin/trivy
 export TRIVY_HOME
+
+# Symlink root's .trivy to TRIVY_HOME so that plugin installs during
+# the build are written to the shared location.
+ln -sf "${TRIVY_HOME}" /root/.trivy
 
 # Install plugins if specified
 if [ -n "${TRIVY_PLUGINS}" ]; then
