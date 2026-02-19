@@ -11,7 +11,7 @@
         "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
         "features": {
             "sbom": {
-                "version": "2.2.5"
+                "version": "3.0.1"
             }
         }
     },

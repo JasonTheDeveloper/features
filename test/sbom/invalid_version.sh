@@ -13,29 +13,24 @@ source dev-container-features-test-lib
 # sbom-tool should be installed (the scenario uses "latest")
 check "sbom-tool is installed" bash -c "which sbom-tool"
 
-# Verify that a completely fake version does NOT appear in the releases list
-check "fake version not in releases" bash -c \
-    "! curl -sL https://api.github.com/repos/microsoft/sbom-tool/releases | jq -r '.[].tag_name' | grep -qx 'v99.99.99'"
-
-# Simulate the install script's validation: attempt to match a non-existent
-# version against the release list and confirm it fails
-check "validation rejects non-existent version" bash -c '
-    version_list=$(curl -sL https://api.github.com/repos/microsoft/sbom-tool/releases | jq -r ".[].tag_name")
-    if echo "${version_list}" | grep -qx "v99.99.99"; then
-        echo "ERROR: fake version was found in release list"
+# Verify that a fake version returns non-200 from GitHub releases
+check "fake version not in releases" bash -c '
+    http_code=$(curl -sIL -o /dev/null -w "%{http_code}" "https://github.com/microsoft/sbom-tool/releases/tag/v99.99.99")
+    if [ "${http_code}" = "200" ]; then
+        echo "ERROR: fake version v99.99.99 returned HTTP 200"
         exit 1
     fi
-    echo "Correctly rejected non-existent version v99.99.99"
+    echo "Correctly rejected non-existent version v99.99.99 (HTTP ${http_code})"
 '
 
-# Also verify that a valid version IS accepted by the same logic
+# Verify that a valid version IS accepted (returns HTTP 200)
 check "validation accepts a real version" bash -c '
-    version_list=$(curl -sL https://api.github.com/repos/microsoft/sbom-tool/releases | jq -r ".[].tag_name")
-    if ! echo "${version_list}" | grep -q "0.3.3"; then
-        echo "ERROR: valid version 0.3.3 was not found in release list"
+    http_code=$(curl -sIL -o /dev/null -w "%{http_code}" "https://github.com/microsoft/sbom-tool/releases/tag/v3.0.1")
+    if [ "${http_code}" != "200" ]; then
+        echo "ERROR: valid version v3.0.1 returned HTTP ${http_code}"
         exit 1
     fi
-    echo "Correctly accepted valid version 0.3.3"
+    echo "Correctly accepted valid version v3.0.1 (HTTP ${http_code})"
 '
 
 reportResults

@@ -24,30 +24,46 @@ check_packages() {
 	fi
 }
 
-# Figure out correct version of a three part version number is not passed
+# Resolve "latest" version by following the GitHub redirect (no API rate limit)
+resolve_latest_version() {
+	local latest_url="https://github.com/microsoft/sbom-tool/releases/latest"
+	local redirect_url
+	redirect_url=$(curl -sIL -o /dev/null -w '%{url_effective}' "${latest_url}")
+	if [ -z "${redirect_url}" ] || [ "${redirect_url}" = "${latest_url}" ]; then
+		echo "ERROR: Failed to resolve latest sbom-tool version from GitHub." >&2
+		exit 1
+	fi
+	# Extract tag from redirect URL (e.g. .../releases/tag/v4.1.5 -> v4.1.5)
+	echo "${redirect_url##*/}"
+}
+
+# Validate that a given version/tag exists by checking the download URL returns 200
 validate_version_exists() {
 	local variable_name=$1
-    local requested_version=$2
-	if [ "${requested_version}" = "latest" ]; then requested_version=$(curl -sL https://api.github.com/repos/microsoft/sbom-tool/releases/latest | jq -r ".tag_name"); fi
-	local version_list
-    version_list=$(curl -sL https://api.github.com/repos/microsoft/sbom-tool/releases | jq -r ".[].tag_name")
-	if [ -z "${variable_name}" ] || ! echo "${version_list}" | grep "${requested_version}" >/dev/null 2>&1; then
-		echo -e "Invalid ${variable_name} value: ${requested_version}\nValid values:\n${version_list}" >&2
+	local requested_version=$2
+	local check_url="https://github.com/microsoft/sbom-tool/releases/tag/${requested_version}"
+	local http_code
+	http_code=$(curl -sIL -o /dev/null -w '%{http_code}' "${check_url}")
+	if [ "${http_code}" != "200" ]; then
+		echo "ERROR: ${variable_name} value '${requested_version}' not found (HTTP ${http_code})." >&2
+		echo "Check available versions at: https://github.com/microsoft/sbom-tool/releases" >&2
 		exit 1
 	fi
 	echo "${variable_name}=${requested_version}"
 }
 
 # make sure we have curl
-check_packages curl jq ca-certificates libicu-dev
+check_packages curl ca-certificates libicu-dev
 
 # Normalize version: add 'v' prefix if missing
 if [ "${SBOM_TOOL_VERSION}" != "latest" ] && [[ "${SBOM_TOOL_VERSION}" != v* ]]; then
 	SBOM_TOOL_VERSION="v${SBOM_TOOL_VERSION}"
 fi
 
-# make sure version is available
-if [ "${SBOM_TOOL_VERSION}" = "latest" ]; then SBOM_TOOL_VERSION=$(curl -sL https://api.github.com/repos/microsoft/sbom-tool/releases/latest | jq -r ".tag_name"); fi
+# Resolve latest or validate the requested version
+if [ "${SBOM_TOOL_VERSION}" = "latest" ]; then
+	SBOM_TOOL_VERSION=$(resolve_latest_version)
+fi
 validate_version_exists SBOM_TOOL_VERSION "${SBOM_TOOL_VERSION}"
 
 # download and install binary
